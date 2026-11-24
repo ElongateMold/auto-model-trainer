@@ -9,7 +9,7 @@ class DataReader(ABC):
 
     @abstractmethod
     def read(self) -> pd.DataFrame:
-        # Cada subclase usa su propia lógica de lectura
+        # Every subclass must implement this method to read data from the specified path and return a DataFrame.
         pass
 
 class CSVReader(DataReader):
