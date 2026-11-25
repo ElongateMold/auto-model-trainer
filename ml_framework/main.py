@@ -88,7 +88,7 @@ def run_pipeline(
     trainer.train(X_train_ready, y_train)
     predictions = trainer.predict(X_test_ready)
 
-    # 8. Evaluation & Visualization
+    # 8. Evaluation & HD Visualization
     evaluator = ModelEvaluator(problem_type=problem_type)
     leaderboard = evaluator.evaluate_all(
         y_true=y_test,
@@ -97,8 +97,19 @@ def run_pipeline(
     )
     winner = evaluator.get_winner(leaderboard)
 
-    visualizer = EvaluationVisualizer(problem_type=problem_type, save_dir=reports_dir)
-    visualizer.plot_evaluation(y_true=y_test, predictions=predictions)
+    visualizer = EvaluationVisualizer(
+        problem_type=problem_type,
+        save_dir=reports_dir,
+        dpi=300,
+    )
+    visualizer.plot_all(
+        models=trainer.best_models,
+        X_train=X_train_ready,
+        y_train=y_train,
+        X_test=X_test_ready,
+        y_test=y_test,
+        predictions=predictions,
+    )
 
     print(f"Target: {target_col} ({problem_type}) | Family: {model_family}")
     print(f"Dropped Columns: {decision['dropped_columns']}")
