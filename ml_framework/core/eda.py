@@ -16,10 +16,12 @@ class EDAAnalyzer:
         df: pd.DataFrame,
         target_col: str | None = None,
         max_classes: int = 15,
+        unsupervised: bool = False,
     ):
         self.df = df
         self.max_classes = max_classes
         self.target_col = self._resolve_target(target_col)
+        self.unsupervised = unsupervised
 
     # --- TARGET & PROBLEM TYPE DETECTION (FROM PREVIOUS STEP) ---
 
@@ -44,6 +46,8 @@ class EDAAnalyzer:
         return clean_name == "id" or clean_name.endswith("_id")
 
     def infer_problem_type(self) -> str:
+        if self.target_col is None:
+            raise ValueError("Cannot infer supervised problem type in unsupervised mode.")
         target_series = self.df[self.target_col].dropna()
         if target_series.empty:
             raise ValueError(f"Target column '{self.target_col}' has only missing values.")
@@ -211,7 +215,7 @@ class EDAAnalyzer:
 
         return {
             "target": self.target_col,
-            "problem_type": self.infer_problem_type(),
+            "problem_type": "unsupervised" if self.unsupervised else self.infer_problem_type(),
             "missing_values": self.check_missing_values(),
             "categorical_cardinality": self.check_categorical_cardinality(),
             "outliers_iqr": self.detect_outliers_iqr(),

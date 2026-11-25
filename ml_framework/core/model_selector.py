@@ -11,7 +11,8 @@ class ModelSelector:
     ):
         self.df = df.copy()
         self.report = diagnostic_report
-        self.target_col: str = str(diagnostic_report["target"])
+        raw_target = diagnostic_report.get("target")
+        self.target_col: str | None = str(raw_target) if raw_target is not None else None
         self.problem_type: str = str(diagnostic_report["problem_type"])
         self.outlier_pct_threshold = outlier_pct_threshold
         self.non_linear_gap_threshold = non_linear_gap_threshold
