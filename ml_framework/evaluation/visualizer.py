@@ -80,7 +80,7 @@ class EvaluationVisualizer:
     def _finalize_figure(self, fig, filename: str) -> None:
         if self.save_dir is not None:
             self.save_dir.mkdir(parents=True, exist_ok=True)
-            plt.savefig(self.save_dir / filename, dpi=150)
+            plt.savefig(self.save_dir / filename, dpi=300)
             plt.close(fig)
         else:
             plt.show()

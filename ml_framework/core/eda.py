@@ -202,7 +202,7 @@ class EDAAnalyzer:
         if save_dir is not None:
             save_dir.mkdir(parents=True, exist_ok=True)
             output_path = save_dir / "correlation_heatmaps.png"
-            plt.savefig(output_path, dpi=150)
+            plt.savefig(output_path, dpi=300)
             plt.close(fig)
         else:
             plt.show()
