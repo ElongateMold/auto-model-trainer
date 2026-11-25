@@ -27,3 +27,15 @@ class BaseModelTrainer(ABC):
             preds = model.predict(X_test)
             predictions[name] = pd.Series(preds, index=X_test.index)
         return predictions
+
+def get_model_trainer(model_family: str, problem_type: str) -> BaseModelTrainer:
+    from models.supervised.linear_models import LinearModelTrainer
+    from models.supervised.tree_models import TreeModelTrainer
+    # Later you can import PrototypeModelTrainer and SplineModelTrainer here too
+
+    if model_family == "linear":
+        return LinearModelTrainer(problem_type)
+    elif model_family == "tree_based":
+        return TreeModelTrainer(problem_type)
+    else:
+        raise ValueError(f"Unsupported model family: '{model_family}'")
