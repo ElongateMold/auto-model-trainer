@@ -1,4 +1,6 @@
 from pathlib import Path
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.api.types import is_bool_dtype, is_numeric_dtype
@@ -156,12 +158,20 @@ class EDAAnalyzer:
 
     # --- 3. COVARIANCE, CORRELATION & ANNOTATED HEATMAPS ---
 
-    def compute_matrices(self) -> dict[str, pd.DataFrame]:
+    def _get_valid_numeric_df(self) -> pd.DataFrame:
         numeric_df = self.df.select_dtypes(include=["number"], exclude=["bool"])
+        valid_cols = [
+            col for col in numeric_df.columns
+            if not self._is_id_column(col) and numeric_df[col].nunique(dropna=True) > 1
+        ]
+        return numeric_df[valid_cols]
+
+    def compute_matrices(self) -> dict[str, pd.DataFrame]:
+        valid_numeric = self._get_valid_numeric_df()
         return {
-            "covariance": numeric_df.cov(),
-            "pearson_correlation": numeric_df.corr(method="pearson"),
-            "spearman_correlation": numeric_df.corr(method="spearman"),
+            "covariance": valid_numeric.cov(),
+            "pearson_correlation": valid_numeric.corr(method="pearson"),
+            "spearman_correlation": valid_numeric.corr(method="spearman"),
         }
 
     def render_correlation_heatmaps(self, save_dir: Path | None = None) -> None:
@@ -173,36 +183,43 @@ class EDAAnalyzer:
             print("No numeric columns available to plot correlation heatmaps.")
             return
 
-        fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+        n_vars = len(pearson_corr.columns)
+        # Scale figure dimensions dynamically so 20+ variables never overlap
+        panel_size = max(8.0, n_vars * 0.58)
+        annot_font_size = 9 if n_vars <= 12 else (7 if n_vars <= 20 else 6)
 
-        sns.heatmap(
-            pearson_corr,
-            annot=True,
-            fmt=".2f",
-            cmap="coolwarm",
-            vmin=-1,
-            vmax=1,
-            ax=axes[0],
-        )
-        axes[0].set_title("Pearson Correlation (Linear Relationships)")
+        fig, axes = plt.subplots(1, 2, figsize=(panel_size * 2 + 2.5, panel_size))
 
-        sns.heatmap(
-            spearman_corr,
-            annot=True,
-            fmt=".2f",
-            cmap="coolwarm",
-            vmin=-1,
-            vmax=1,
-            ax=axes[1],
-        )
-        axes[1].set_title("Spearman Correlation (Monotonic / Non-Linear)")
+        for ax, matrix, title in [
+            (axes[0], pearson_corr, "Pearson Correlation (Linear Relationships)"),
+            (axes[1], spearman_corr, "Spearman Correlation (Monotonic / Non-Linear)"),
+        ]:
+            sns.heatmap(
+                matrix,
+                annot=True,
+                fmt=".2f",
+                annot_kws={"size": annot_font_size},
+                cmap="coolwarm",
+                vmin=-1,
+                vmax=1,
+                square=True,
+                linewidths=0.5,
+                linecolor="white",
+                cbar_kws={"shrink": 0.78},
+                ax=ax,
+            )
+            ax.set_title(title, fontsize=13, pad=12)
+            ax.tick_params(axis="x", rotation=45, labelsize=9)
+            ax.tick_params(axis="y", rotation=0, labelsize=9)
+            for label in ax.get_xticklabels():
+                label.set_horizontalalignment("right")
 
         plt.tight_layout()
 
         if save_dir is not None:
             save_dir.mkdir(parents=True, exist_ok=True)
             output_path = save_dir / "correlation_heatmaps.png"
-            plt.savefig(output_path, dpi=300)
+            plt.savefig(output_path, dpi=300, bbox_inches="tight")
             plt.close(fig)
         else:
             plt.show()

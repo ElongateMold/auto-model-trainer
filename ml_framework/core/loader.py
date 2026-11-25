@@ -29,7 +29,15 @@ class DelimitedTextReader(DataReader):
     def read(self) -> pd.DataFrame:
         for encoding in ("utf-8", "latin-1"):
             try:
-                return pd.read_csv(self.path, sep=self.sep, encoding=encoding)
+                df = pd.read_csv(self.path, sep=self.sep, encoding=encoding)
+                # If a .csv or .tsv parses as 1 column, auto-sniff the true delimiter (\t, ;, |)
+                if df.shape[1] == 1:
+                    sniffed_df = pd.read_csv(
+                        self.path, sep=None, engine="python", encoding=encoding
+                    )
+                    if sniffed_df.shape[1] > 1:
+                        return sniffed_df
+                return df
             except UnicodeDecodeError:
                 continue
         raise UnicodeDecodeError(

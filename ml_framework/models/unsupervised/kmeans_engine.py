@@ -1,5 +1,6 @@
 from pathlib import Path
-import matplotlib.cm as cm
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -45,6 +46,8 @@ class KMeansEngine:
         return ks[best_idx]
 
     def run_audit(self, X: pd.DataFrame) -> pd.DataFrame:
+        if X.shape[1] == 0:
+            raise ValueError("No valid features remain after pruning/preprocessing to run K-Means.")
         n_samples = len(X)
         valid_ks = [k for k in self.k_range if 2 <= k < n_samples]
         if not valid_ks:
@@ -117,7 +120,7 @@ class KMeansEngine:
             size = len(cluster_vals)
             y_upper = y_lower + size
 
-            color = cm.get_cmap("tab10")(cluster_id % 10)
+            color = plt.cm.tab10(cluster_id % 10)
             axes[1].fill_betweenx(
                 np.arange(y_lower, y_upper), 0, cluster_vals, facecolor=color, edgecolor=color, alpha=0.8
             )
@@ -134,7 +137,8 @@ class KMeansEngine:
         # --- Panel 3: 2D PCA Projection of Observations & Centroids ---
         pca = PCA(n_components=2, random_state=self.random_state)
         X_pca = pca.fit_transform(X)
-        centroids_pca = pca.transform(self.model.cluster_centers_)
+        centers_df = pd.DataFrame(self.model.cluster_centers_, columns=X.columns)
+        centroids_pca = pca.transform(centers_df)
 
         scatter = axes[2].scatter(
             X_pca[:, 0], X_pca[:, 1], c=labels, cmap="tab10", alpha=0.7, edgecolors="k", s=45

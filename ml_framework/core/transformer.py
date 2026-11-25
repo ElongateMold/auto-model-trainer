@@ -2,7 +2,7 @@ import pandas as pd
 
 
 class DataCleaner:
-    def __init__(self, df: pd.DataFrame, max_unique_ratio: float = 0.5):
+    def __init__(self, df: pd.DataFrame, max_unique_ratio: float = 0.15):
         self.df = df.copy()
         self.max_unique_ratio = max_unique_ratio
 
