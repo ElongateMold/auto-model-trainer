@@ -1,6 +1,17 @@
-# Modular Machine Learning Framework
+# Auto Model Trainer — Modular Machine Learning Framework
 
 An object-oriented, modular Python platform for automated exploratory data analysis (EDA), leak-free preprocessing, and autonomous routing between **Supervised Learning** and **Unsupervised Clustering**.
+
+---
+
+## Quick Start from Terminal (Windows — No Admin or Python Required)
+
+You can download and launch the portable executable directly into your user profile (`%LOCALAPPDATA%\ml_framework`) without administrator privileges or a local Python installation.
+
+### 1. Interactive Menu Mode
+Open **PowerShell** (standard user terminal) and run:
+```powershell
+irm [https://raw.githubusercontent.com/ElongateMold/auto-model-trainer/main/run.ps1](https://raw.githubusercontent.com/ElongateMold/auto-model-trainer/main/run.ps1) | iex
 
 ## Project Architecture
 

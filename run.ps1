@@ -7,8 +7,8 @@
 $ErrorActionPreference = "Stop"
 
 # --- Configuración del repositorio en GitHub ---
-$RepoOwner  = "TU_USUARIO"
-$RepoName   = "TU_REPOSITORIO"
+$RepoOwner  = "ElongateMold"
+$RepoName   = "auto-model-trainer"
 $AssetName  = "ml_framework_win64.zip"
 $ReleaseUrl = "https://github.com/$RepoOwner/$RepoName/releases/latest/download/$AssetName"
 
