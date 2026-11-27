@@ -12,8 +12,7 @@ You can download and launch the portable executable directly into your user prof
 Open **PowerShell** (standard user terminal) and run:
 ```powershell
 irm [https://raw.githubusercontent.com/ElongateMold/auto-model-trainer/main/run.ps1](https://raw.githubusercontent.com/ElongateMold/auto-model-trainer/main/run.ps1) | iex
-
-
+```
 
 ## Project Architecture
 
@@ -53,3 +52,4 @@ ml_framework/
 ├── main.py                     # CLI and interactive entry point
 ├── README.md                   # Project documentation
 └── requirements.txt            # Pinned dependencies
+```
