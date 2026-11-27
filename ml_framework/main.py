@@ -1,3 +1,9 @@
+import os
+import warnings
+
+os.environ["PYTHONWARNINGS"] = "ignore"
+warnings.filterwarnings("ignore")
+
 import matplotlib
 matplotlib.use("Agg")
 

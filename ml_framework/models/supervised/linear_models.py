@@ -22,7 +22,7 @@ class LinearModelTrainer(BaseModelTrainer):
         if self.problem_type == "classification":
             return {
                 "LogisticRegression": {
-                    "penalty": ["l1", "l2"],
+                    "l1_ratio": [0.0, 1.0],
                     "C": [0.1, 1.0, 10.0],
                 },
                 "RidgeClassifier": {

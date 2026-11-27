@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+import warnings
+import os
 import joblib
 import pandas as pd
 from sklearn.base import BaseEstimator
@@ -42,6 +44,10 @@ class BaseModelTrainer(ABC):
     def fit(self, X_train: pd.DataFrame, y_train: pd.Series) -> "BaseModelTrainer":
         cv_splitter = self._get_cv_splitter()
         scoring = "f1_weighted" if self.problem_type == "classification" else "r2"
+
+        os.environ["PYTHONWARNINGS"] = "ignore"
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
 
         for name, estimator in self.models.items():
             grid = self.param_grids.get(name, {})
