@@ -13,6 +13,8 @@ Open **PowerShell** (standard user terminal) and run:
 ```powershell
 irm [https://raw.githubusercontent.com/ElongateMold/auto-model-trainer/main/run.ps1](https://raw.githubusercontent.com/ElongateMold/auto-model-trainer/main/run.ps1) | iex
 
+
+
 ## Project Architecture
 
 ```text
